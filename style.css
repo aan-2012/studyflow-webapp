@@ -1,0 +1,135 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: #f5f7fa;
+    color: #222; 
+}
+
+.navbar {
+    background: #ffffff;
+    color: #222;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.navbar a {
+    color: #333;
+    margin-left: 15px;
+    text-decoration: none;
+}
+
+.container {
+    padding: 20px;
+}
+
+.card {
+    background: #ffffff;
+    padding: 20px;
+    margin-top: 15px;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.grid {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.box {
+    flex: 1;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    border: 1px solid #e0e0e0;
+}
+
+
+input, select {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #dcdfe5;
+    background: #eef1f5;
+    color: #222;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+button {
+    padding: 8px 14px;
+    border: 1px solid #c5c9cf;
+    border-radius: 8px;
+    background-color: #d9dde3;
+    color: #222;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+
+button:hover {
+    background-color: #cfd4da;
+}
+
+.active-btn {
+    background-color: #dff3e2;
+    color: #2e7d32;
+    border: 1px solid #b7e0bd;
+}
+
+.filter-bar {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+ul {
+    list-style: none;
+    padding: 0
+}
+
+li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 0;
+}
+
+s {
+    color: #888
+}
+
+
+
+.progress-bar {
+    width: 100%;
+    height: 10px;
+    background: #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #4CAF50;
+    transition: width 0.3s ease;
+}
+
+h1 {
+    margin-bottom: 10px;
+}
+
+.card h3 {
+    margin-top: 0;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    transition: 0.2s;
+}

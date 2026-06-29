@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Tasks</h1>
+
+<!-- PROGRESS -->
+<div class="card">
+    <h3>Progress</h3>
+
+    <div class="progress-bar">
+        <div class="progress-fill"
+             style="width: {{ progress }}%;">
+        </div>
+    </div>
+
+    <p>
+        {{ progress }}% ({{ completed_tasks }} / {{ total_tasks }} completed)
+    </p>
+</div>
+
+<!-- SEARCH -->
+<div class="card">
+    <form method="GET" action="/tasks">
+        <input type="text" name="search" placeholder="Search tasks..." value="{{ search }}">
+        <button type="submit">Search</button>
+    </form>
+</div>
+
+<!-- ADD TASK -->
+<div class="card">
+    <form method="POST">
+        <input type="text" name="task" maxlength="100" placeholder="Enter task" required>
+        <small id="charCount">0 / 100</small>
+
+        <select name="category">
+            <option>School</option>
+            <option>Personal</option>
+            <option>Extracurricular</option>
+            <option>Other</option>
+        </select>
+
+        <button type="submit">Add</button>
+    </form>
+</div>
+
+<!-- FILTERS -->
+<div class="card filter-bar">
+    <a href="/tasks?category=All"><button>All</button></a>
+    <a href="/tasks?category=School"><button>School</button></a>
+    <a href="/tasks?category=Personal"><button>Personal</button></a>
+    <a href="/tasks?category=Extracurricular"><button>Extracurricular</button></a>
+    <a href="/tasks?category=Other"><button>Other</button></a>
+</div>
+
+<!-- TASK LIST -->
+<div class="card">
+
+    {% if tasks %}
+        <ul>
+
+        {% for task in tasks %}
+            <li>
+
+                <div>
+                    <a href="/toggle/{{ task[0] }}">
+                        {% if task[3] == 1 %}
+                            <s><b>[{{ task[2] }}]</b> {{ task[1] }}</s>
+                        {% else %}
+                            <b>[{{ task[2] }}]</b> {{ task[1] }}
+                        {% endif %}
+                    </a>
+                </div>
+
+                <div>
+                    <a href="/edit/{{ task[0] }}"><button>Edit</button></a>
+                    <a href="/delete/{{ task[0] }}"><button>Delete</button></a>
+                </div>
+
+            </li>
+        {% endfor %}
+
+        </ul>
+    {% else %}
+        <p>No tasks yet. Add one above.</p>
+    {% endif %}
+
+</div>
+
+<script>
+const input = document.querySelector('input[name="task"]');
+const counter = document.getElementById('charCount');
+
+input.addEventListener('input', () => {
+    counter.textContent = `${input.value.length} / 100`;
+});
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Notes</h1>
+
+<form method="GET">
+    <input type="text" name="category" placeholder="Search Category">
+    <button type="submit">Filter</button>
+</form>
+
+
+<div class="card">
+    <form method="POST">
+        <textarea
+            name="note"
+            id="note"
+            rows="8"
+            maxlength="2000"
+            placeholder="Write your notes here..."
+            style="width: 100%; padding: 10px;"></textarea>
+
+    
+
+        <p id="charCount">0 / 2000</p>
+
+        <input
+            type="text"
+            name="category"
+            placeholder="e.g. Maths Lesson 1"
+            style="width: 100%; padding: 8px; margin-bottom: 10px;">
+
+        <button type="submit">Save Note</button> 
+    </form>
+</div>
+
+<h2>Saved Notes</h2>
+
+{% for note in notes %}
+    <div class="card">
+        <strong>{{ note[2] if note[2] else "No Category" }}</strong>
+
+        <p style="white-space: pre-wrap;">{{ note[1] }}</p>
+
+        <!-- DELETE BUTTON -->
+        <form action="{{ url_for('delete_note', note_id=note[0]) }}" method="POST">
+            <button type="submit">Delete</button>
+        </form>
+    </div>
+{% endfor %}
+
+<script>
+const noteInput = document.getElementById("note");
+const charCount = document.getElementById("charCount");
+
+noteInput.addEventListener("input", () => {
+    charCount.textContent = noteInput.value.length + " / 2000";
+});
+
+</script>
+
+{% endblock %}
