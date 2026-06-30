@@ -34,11 +34,19 @@
         <small id="charCount">0 / 100</small>
 
         <select name="category">
-            <option>School</option>
-            <option>Personal</option>
-            <option>Extracurricular</option>
-            <option>Other</option>
+            <option value="School">School</option>
+            <option value="Personal">Personal</option>
+            <option value="Extracurricular">Extracurricular</option>
+            <option value="Other">Other</option>
         </select>
+
+        <select name="priority">
+            <option value="Low" selected>Low priority</option>
+            <option value="Medium">Medium priority</option>
+            <option value="High">High priority</option>
+        </select>
+
+        <input type="date" name="due_date">
 
         <button type="submit">Add</button>
     </form>
@@ -64,12 +72,24 @@
 
                 <div>
                     <a href="/toggle/{{ task[0] }}">
-                        {% if task[3] == 1 %}
+                        {% if task[5] == 1 %}
                             <s><b>[{{ task[2] }}]</b> {{ task[1] }}</s>
                         {% else %}
                             <b>[{{ task[2] }}]</b> {{ task[1] }}
                         {% endif %}
                     </a>
+
+                    <br>
+
+                    <small>
+                        Priority: {{ task[3] or "Low" }}
+
+
+                        {% if task[4] %}
+                            | Due: {{ task[4] }}
+                        {% endif %}
+
+                    </small>
                 </div>
 
                 <div>
