@@ -14,6 +14,14 @@
             <option value="Other" {% if task[2] == "Other" %}selected{% endif %}>Other</option>
         </select>
 
+        <select name="priority">
+            <option value="High" {% if task[3] == "High" %}selected{% endif %}>High</option>
+            <option value="Medium"  {% if task[3] == "Medium" %}selected{% endif %}>Medium</option>
+            <option value="Low"  {% if task[3] == "Low" %}selected{% endif %}>Low</option>
+        </select>
+
+        <input type="date" name="due_date" value="{{ task[4] }}">
+
         <button type="submit">Save</button>
     </form>
 </div>
