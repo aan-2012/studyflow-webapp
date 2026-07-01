@@ -5,16 +5,19 @@ import os
 
 app = Flask(__name__)
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = "/tmp/tasks.db"
+
+
 def get_db():
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
 
+
 def init_db():
     conn = get_db()
     c = conn.cursor()
+
     c.execute('''
         CREATE TABLE IF NOT EXISTS tasks (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -25,6 +28,7 @@ def init_db():
             done INTEGER
         )
     ''')
+
     c.execute('''
         CREATE TABLE IF NOT EXISTS notes (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -32,12 +36,15 @@ def init_db():
             category TEXT
         )
     ''')
+
     conn.commit()
     conn.close()
+
 
 @app.before_request
 def before_request():
     init_db()
+
 
 @app.route("/")
 def home():
@@ -58,6 +65,7 @@ def home():
         progress=progress
     )
 
+
 @app.route("/notes", methods=["GET", "POST"])
 def notes():
     conn = get_db()
@@ -75,6 +83,7 @@ def notes():
             )
             conn.commit()
 
+        conn.close()
         return redirect("/notes")
 
     category_filter = request.args.get("category", "")
@@ -92,8 +101,10 @@ def notes():
 
     return render_template("notes.html", notes=all_notes)
 
+
 @app.route("/tasks", methods=["GET", "POST"])
 def tasks():
+
     if request.method == "POST":
         task = request.form.get("task")
         category = request.form.get("category")
@@ -101,15 +112,17 @@ def tasks():
         if task:
             task = task[:100]
 
-        if task:
             conn = get_db()
             c = conn.cursor()
+
             priority = request.form.get("priority") or "Low"
             due_date = request.form.get("due_date") or None
+
             c.execute(
                 "INSERT INTO tasks (text, category, priority, due_date, done) VALUES (?, ?, ?, ?, ?)",
                 (task, category, priority, due_date, 0)
             )
+
             conn.commit()
             conn.close()
 
@@ -138,9 +151,10 @@ def tasks():
 
     c.execute(query, params)
     tasks = c.fetchall()
-    
+
     today = date.today().isoformat()
 
+    # ✅ FIXED SORT FUNCTION (BUG REMOVED)
     def sort_key(task):
         done = task[5]
 
@@ -153,14 +167,16 @@ def tasks():
 
         priority = priority_map.get(task[3] or "Low", 3)
 
+        due_date = task[4] or ""
+
         overdue = 0
         if task[4] and task[4] < today and done == 0:
             overdue = -1
-        elif task[4] == today:
+        elif task[4] == today and done == 0:
             overdue = -0.5
-        
-        return(overdue, priority, due_date)
-    
+
+        return (overdue, priority, due_date)
+
     tasks.sort(key=sort_key)
     conn.close()
 
@@ -179,6 +195,7 @@ def tasks():
         today=today
     )
 
+
 @app.route("/delete/<int:id>")
 def delete(id):
     conn = get_db()
@@ -188,6 +205,7 @@ def delete(id):
     conn.close()
     return redirect("/tasks")
 
+
 @app.route("/delete_note/<int:note_id>", methods=["POST"])
 def delete_note(note_id):
     conn = get_db()
@@ -196,6 +214,7 @@ def delete_note(note_id):
     conn.commit()
     conn.close()
     return redirect(url_for("notes"))
+
 
 @app.route("/toggle/<int:id>")
 def toggle(id):
@@ -213,6 +232,7 @@ def toggle(id):
     conn.close()
     return redirect("/tasks")
 
+
 @app.route("/edit/<int:id>", methods=["GET", "POST"])
 def edit(id):
     conn = get_db()
@@ -224,11 +244,11 @@ def edit(id):
         new_priority = request.form.get("priority") or "Low"
         new_due_date = request.form.get("due_date")
 
-
         c.execute(
             "UPDATE tasks SET text=?, category=?, priority=?, due_date=? WHERE id=?",
             (new_text, new_category, new_priority, new_due_date, id)
         )
+
         conn.commit()
         conn.close()
         return redirect("/tasks")
@@ -238,6 +258,7 @@ def edit(id):
     conn.close()
 
     return render_template("edit.html", task=task)
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
