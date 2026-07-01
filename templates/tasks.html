@@ -68,7 +68,15 @@
         <ul>
 
         {% for task in tasks %}
-            <li>
+            <li class="
+                {% if task[4] and task[4] < today and task[5] == 0 %}overdue
+                {% elif task[4] and task[4] == today and task[5] == 0 %}today
+                {% elif task[3] == 'High' %}high
+                {% elif task[3] == 'Medium' %}medium
+                {% else %}normal
+                {% endif %}
+            
+            ">
 
                 <div>
                     <a href="/toggle/{{ task[0] }}">
