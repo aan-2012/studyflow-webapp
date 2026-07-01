@@ -98,6 +98,11 @@ li {
     justify-content: space-between;
     align-items: center;
     margin: 10px 0;
+    transition: 0.2s;
+}
+
+li:hover {
+    transform: scale(1.01);
 }
 
 s {
@@ -132,4 +137,48 @@ h1 {
 .card:hover {
     transform: translateY(-2px);
     transition: 0.2s;
+}
+
+.overdue {
+    background: #ffdddd;
+    border-left: 5px solid red;
+}
+
+.today {
+    background: #fff3cd;
+    border-left: 5px solid orange;
+}
+
+.high {
+    border-left: 5px solid #dc3545;
+}
+
+.medium {
+    border-left: 5px solid #ffc107;
+}
+
+.normal {
+    border-left: 5px solid #ccc;
+}
+
+.task-item {
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+}
+
+.toolbar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.toolbar button {
+    font-size: 14px;
+    padding: 6px 10px;
+}
+
+.note-content {
+    white-space: pre-wrap;
+    line-height: 1.5;
 }
