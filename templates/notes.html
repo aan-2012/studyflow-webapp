@@ -8,18 +8,27 @@
     <button type="submit">Filter</button>
 </form>
 
-
 <div class="card">
     <form method="POST">
-        <textarea
-            name="note"
-            id="note"
-            rows="8"
-            maxlength="2000"
-            placeholder="Write your notes here..."
-            style="width: 100%; padding: 10px;"></textarea>
 
-    
+
+        <div class="toolbar">
+            <button type="button" onclick="toggleBold()"><b>B</b></button>
+            <button type="button" onclick="toggleItalic()"><i>I</i></button>
+            <button type="button" onclick="toggleUnderline()"><u>U</u></button>
+
+            <button type="button" onclick="insertList()">• List</button>
+            <button type="button" onclick="insertNumberedList()">1. List</button>
+        </div>
+
+
+        <div id="editor"
+            contenteditable="true"
+            style="min-height: 200px; padding: 10px; border: 1px solid #ccc; border-radius: 8px;">
+        </div>
+
+
+        <input type="hidden" name="note" id="hiddenNote">
 
         <p id="charCount">0 / 2000</p>
 
@@ -29,7 +38,8 @@
             placeholder="e.g. Maths Lesson 1"
             style="width: 100%; padding: 8px; margin-bottom: 10px;">
 
-        <button type="submit">Save Note</button> 
+        <button type="submit">Save Note</button>
+
     </form>
 </div>
 
@@ -39,9 +49,10 @@
     <div class="card">
         <strong>{{ note[2] if note[2] else "No Category" }}</strong>
 
-        <p style="white-space: pre-wrap;">{{ note[1] }}</p>
+        <div class="note-content">
+            {{ note[1] | safe }}
+        </div>
 
-        <!-- DELETE BUTTON -->
         <form action="{{ url_for('delete_note', note_id=note[0]) }}" method="POST">
             <button type="submit">Delete</button>
         </form>
@@ -49,13 +60,68 @@
 {% endfor %}
 
 <script>
-const noteInput = document.getElementById("note");
+const editor = document.getElementById("editor");
+const hiddenNote = document.getElementById("hiddenNote");
 const charCount = document.getElementById("charCount");
 
-noteInput.addEventListener("input", () => {
-    charCount.textContent = noteInput.value.length + " / 2000";
+
+function toggleBold() {
+    document.execCommand("bold");
+    editor.focus();
+    sync();
+}
+
+function toggleItalic() {
+    document.execCommand("italic");
+    editor.focus();
+    sync();
+}
+
+function toggleUnderline() {
+    document.execCommand("underline");
+    editor.focus();
+    sync();
+}
+
+function insertList() {
+    document.execCommand("insertUnorderedList");
+    editor.focus();
+    sync();
+}
+
+function insertNumberedList() {
+    document.execCommand("insertOrderedList");
+    editor.focus();
+    sync();
+}
+
+
+function sync() {
+    hiddenNote.value = editor.innerHTML;
+    charCount.textContent = editor.innerText.length + " / 2000";
+}
+
+
+editor.addEventListener("keydown", function(e) {
+    if (e.ctrlKey && e.key.toLowerCase() === "b") {
+        e.preventDefault();
+        toggleBold();
+    }
+
+    if (e.ctrlKey && e.key.toLowerCase() === "i") {
+        e.preventDefault();
+        toggleItalic();
+    }
+
+    if (e.ctrlKey && e.key.toLowerCase() === "u") {
+        e.preventDefault();
+        toggleUnderline();
+    }
 });
 
+
+editor.addEventListener("input", sync);
+sync();
 </script>
 
 {% endblock %}
