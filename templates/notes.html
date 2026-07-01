@@ -11,23 +11,23 @@
 <div class="card">
     <form method="POST">
 
-
+        <!-- TOOLBAR -->
         <div class="toolbar">
-            <button type="button" onclick="toggleBold()"><b>B</b></button>
-            <button type="button" onclick="toggleItalic()"><i>I</i></button>
-            <button type="button" onclick="toggleUnderline()"><u>U</u></button>
+            <button type="button" onclick="document.execCommand('bold')"><b>B</b></button>
+            <button type="button" onclick="document.execCommand('italic')"><i>I</i></button>
+            <button type="button" onclick="document.execCommand('underline')"><u>U</u></button>
 
-            <button type="button" onclick="insertList()">• List</button>
-            <button type="button" onclick="insertNumberedList()">1. List</button>
+            <button type="button" onclick="document.execCommand('insertUnorderedList')">• List</button>
+            <button type="button" onclick="document.execCommand('insertOrderedList')">1. List</button>
         </div>
 
-
+        <!-- EDITOR -->
         <div id="editor"
             contenteditable="true"
             style="min-height: 200px; padding: 10px; border: 1px solid #ccc; border-radius: 8px;">
         </div>
 
-
+        <!-- HIDDEN INPUT -->
         <input type="hidden" name="note" id="hiddenNote">
 
         <p id="charCount">0 / 2000</p>
@@ -49,6 +49,7 @@
     <div class="card">
         <strong>{{ note[2] if note[2] else "No Category" }}</strong>
 
+        <!-- IMPORTANT: render HTML safely -->
         <div class="note-content">
             {{ note[1] | safe }}
         </div>
@@ -64,61 +65,10 @@ const editor = document.getElementById("editor");
 const hiddenNote = document.getElementById("hiddenNote");
 const charCount = document.getElementById("charCount");
 
-
-function toggleBold() {
-    document.execCommand("bold");
-    editor.focus();
-    sync();
-}
-
-function toggleItalic() {
-    document.execCommand("italic");
-    editor.focus();
-    sync();
-}
-
-function toggleUnderline() {
-    document.execCommand("underline");
-    editor.focus();
-    sync();
-}
-
-function insertList() {
-    document.execCommand("insertUnorderedList");
-    editor.focus();
-    sync();
-}
-
-function insertNumberedList() {
-    document.execCommand("insertOrderedList");
-    editor.focus();
-    sync();
-}
-
-
 function sync() {
     hiddenNote.value = editor.innerHTML;
     charCount.textContent = editor.innerText.length + " / 2000";
 }
-
-
-editor.addEventListener("keydown", function(e) {
-    if (e.ctrlKey && e.key.toLowerCase() === "b") {
-        e.preventDefault();
-        toggleBold();
-    }
-
-    if (e.ctrlKey && e.key.toLowerCase() === "i") {
-        e.preventDefault();
-        toggleItalic();
-    }
-
-    if (e.ctrlKey && e.key.toLowerCase() === "u") {
-        e.preventDefault();
-        toggleUnderline();
-    }
-});
-
 
 editor.addEventListener("input", sync);
 sync();
