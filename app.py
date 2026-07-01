@@ -7,9 +7,13 @@ app = Flask(__name__)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = "/tmp/tasks.db"
+def get_db():
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    return conn
 
 def init_db():
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db()
     c = conn.cursor()
     c.execute('''
         CREATE TABLE IF NOT EXISTS tasks (
@@ -37,7 +41,7 @@ def before_request():
 
 @app.route("/")
 def home():
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db()
     c = conn.cursor()
     c.execute("SELECT * FROM tasks")
     all_tasks = c.fetchall()
@@ -56,7 +60,7 @@ def home():
 
 @app.route("/notes", methods=["GET", "POST"])
 def notes():
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db()
     c = conn.cursor()
 
     if request.method == "POST":
@@ -98,7 +102,7 @@ def tasks():
             task = task[:100]
 
         if task:
-            conn = sqlite3.connect(DB_PATH)
+            conn = get_db()
             c = conn.cursor()
             priority = request.form.get("priority") or "Low"
             due_date = request.form.get("due_date") or None
@@ -114,7 +118,7 @@ def tasks():
     category = request.args.get("category", "All")
     search = request.args.get("search", "")
 
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db()
     c = conn.cursor()
 
     query = "SELECT * FROM tasks"
@@ -149,8 +153,6 @@ def tasks():
 
         priority = priority_map.get(task[3] or "Low", 3)
 
-        due_date = task[4] if task[4] else "9999-12-31"
-
         overdue = 0
         if task[4] and task[4] < today and done == 0:
             overdue = -1
@@ -173,12 +175,13 @@ def tasks():
         search=search,
         total_tasks=total_tasks,
         completed_tasks=completed_tasks,
-        progress=progress
+        progress=progress,
+        today=today
     )
 
 @app.route("/delete/<int:id>")
 def delete(id):
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db()
     c = conn.cursor()
     c.execute("DELETE FROM tasks WHERE id=?", (id,))
     conn.commit()
@@ -187,7 +190,7 @@ def delete(id):
 
 @app.route("/delete_note/<int:note_id>", methods=["POST"])
 def delete_note(note_id):
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db()
     c = conn.cursor()
     c.execute("DELETE FROM notes WHERE id=?", (note_id,))
     conn.commit()
@@ -196,7 +199,7 @@ def delete_note(note_id):
 
 @app.route("/toggle/<int:id>")
 def toggle(id):
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db()
     c = conn.cursor()
 
     c.execute("SELECT done FROM tasks WHERE id=?", (id,))
@@ -212,7 +215,7 @@ def toggle(id):
 
 @app.route("/edit/<int:id>", methods=["GET", "POST"])
 def edit(id):
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db()
     c = conn.cursor()
 
     if request.method == "POST":
